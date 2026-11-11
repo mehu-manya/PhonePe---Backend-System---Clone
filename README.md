@@ -1,8 +1,8 @@
 # PhonePe Backend System Clone
 
-A backend application inspired by digital payment platforms, developed using the MERN ecosystem. The project implements essential wallet and payment-related operations, including user registration, login, MPIN setup, adding money, bill payments, money transfers, and transaction history.
+A backend application inspired by digital payment platforms, built using Node.js, Express.js, and MongoDB. The project covers common wallet and payment-related operations, including user registration, login, MPIN setup, adding money, bill payments, money transfers, and transaction history.
 
-The main focus of this project is to understand how backend services handle user authentication, database operations, protected API routes, and financial transaction records.
+The project focuses on understanding backend development, REST API design, authentication, database management, and handling transaction-related operations.
 
 ## Features
 
@@ -15,27 +15,27 @@ The main focus of this project is to understand how backend services handle user
 ### 2. MPIN Management
 - Set a four-digit MPIN.
 - Hash the MPIN using bcryptjs before storing it.
-- Use MPIN verification for transaction-related operations.
+- Verify MPIN for transaction-related operations.
 
 ### 3. Wallet Management
 - Add money to the user's wallet.
-- Make bill payments using the wallet.
+- Make bill payments using the wallet balance.
 - Maintain wallet balance.
 
 ### 4. Money Transfers
 - Transfer money to another registered user using their phone number.
-- Verify the user's MPIN before processing a transfer.
+- Verify MPIN before processing a transfer.
 - Store transaction details in MongoDB.
 
 ### 5. Transaction History
 - Retrieve transaction records associated with the logged-in user.
-- Display sender and receiver information using Mongoose population.
+- Display sender and receiver details using Mongoose population.
 
 ## Tech Stack
 
 | Technology | Purpose |
 |---|---|
-| Node.js | JavaScript runtime environment |
+| Node.js | JavaScript runtime |
 | Express.js | Backend framework and REST API development |
 | MongoDB | Database |
 | Mongoose | MongoDB object modeling |
@@ -71,19 +71,19 @@ PhonePe-Backend-System/
 │       └── walletRoutes.js
 │
 ├── postman/
-│   └── PhonePe-Backend-API.postman_collection.json
+│   └── Phonepe - MERN - BackEnd.postman_collection.json
 │
-├── .env
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
 ├── server.js
+├── swagger-output.json
 └── README.md
 ```
 
 ## Getting Started
 
-Follow the steps below to run the application on your local machine.
+Follow these steps to run the project locally.
 
 ### Prerequisites
 
@@ -91,33 +91,31 @@ Make sure you have installed:
 
 - Node.js
 - MongoDB
-- MongoDB Compass (optional, for database visualization)
+- MongoDB Compass (optional)
 - Postman
 - Git
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/mehu-manya/PhonePe---Backend-System---Clone.git
 ```
 
-### 2. Navigate to the project directory
+### 2. Navigate to the Project Directory
 
 ```bash
 cd PhonePe---Backend-System---Clone
 ```
 
-### 3. Install dependencies
+### 3. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 4. Configure environment variables
+### 4. Configure Environment Variables
 
-Create a `.env` file in the root directory.
-
-Add the following configuration:
+Create a `.env` file in the root directory and add:
 
 ```env
 PORT=3000
@@ -125,29 +123,21 @@ MONGO_URI=mongodb://localhost:27017/phonepe-BE-system-DEV
 JWT_SECRET=your_secret_key
 ```
 
-Replace the JWT secret with a secure private value. Use your own MongoDB connection string if your database is hosted elsewhere.
+Replace the JWT secret with your own secure value. If you are using MongoDB Atlas, provide your Atlas connection string instead.
 
-### 5. Start the backend server
+### 5. Start the Server
 
 ```bash
 npm run dev
 ```
 
-Once the server starts successfully, the application will be available at:
+Once the server starts, the backend will be available at:
 
-```text
-http://localhost:3000
-```
+**Base URL:** `http://localhost:3000`
 
-Swagger API documentation:
-
-```text
-http://localhost:3000/api-docs
-```
+**Swagger Documentation:** `http://localhost:3000/api-docs`
 
 ## API Endpoints
-
-The following endpoints are included in the Postman collection.
 
 ### Authentication Routes
 
@@ -164,16 +154,18 @@ The following endpoints are included in the Postman collection.
 | Method | Endpoint | Description |
 |---|---|---|
 | POST | `/api/transactions/send` | Send money to another user |
-| GET | `/api/transactions/history` | Get transaction history |
+| GET | `/api/transactions/history` | Retrieve transaction history |
 
 ### Wallet Routes
 
 | Method | Endpoint | Description |
 |---|---|---|
 | POST | `/api/wallet/add-money` | Add money to wallet |
-| POST | `/api/wallet/pay-bill` | Pay a bill using wallet |
+| POST | `/api/wallet/pay-bill` | Pay a bill using wallet balance |
 
-**Authentication:** Protected endpoints require a JWT access token in the Authorization header.
+### Authentication
+
+Protected API routes require a JWT token in the Authorization header.
 
 ```text
 Authorization: Bearer <your_token>
@@ -181,32 +173,35 @@ Authorization: Bearer <your_token>
 
 ## API Testing Using Postman
 
-A Postman collection is included in the `postman/` directory.
+A Postman collection is included in the `postman/` directory for testing the backend APIs.
 
-It contains requests organized into three groups:
+The collection contains three groups of requests:
 
 - Auth Routes
 - Transaction Routes
 - Wallet Routes
 
-### Steps to test the APIs
+### Steps to Test the APIs
 
 1. Open Postman.
 2. Import the JSON collection from the `postman/` directory.
-3. Configure the `base_Url` variable as `http://localhost:3000`.
+3. Set the `base_Url` variable to `http://localhost:3000`.
 4. Start the backend server.
-5. Register a user and log in.
-6. Copy the JWT token returned by the login API.
+5. Register a new user using the registration API.
+6. Log in and copy the JWT token from the response.
 7. Set the token variable in Postman.
 8. Use the authenticated requests to test wallet and transaction operations.
 
+The collection can also be imported directly from the JSON file available in this repository.
+
 ## Database
 
-MongoDB is used to store user and transaction information.
+MongoDB is used to store user details and transaction records. Mongoose schemas are used to define the structure of the documents.
 
-The application uses Mongoose schemas to define the data structure and interact with the database.
+### User Model
 
-**User Model**
+Stores information such as:
+
 - Name
 - Email
 - Phone number
@@ -216,21 +211,22 @@ The application uses Mongoose schemas to define the data structure and interact 
 - Hashed MPIN
 - Created and updated timestamps
 
-**Transaction Model**
+### Transaction Model
 
-Stores transaction-related information such as sender, receiver, amount, transaction type, status, and timestamp, according to the transaction schema.
+Stores transaction-related information, including sender, receiver, amount, transaction type, status, and timestamp, according to the transaction schema.
 
 ## What I Learned
 
-Working on this project helped me understand:
+While developing this project, I gained practical experience with:
 
-- How to structure a backend application using Node.js and Express.js.
-- How REST APIs handle client requests and server responses.
-- How to connect MongoDB with a backend application using Mongoose.
-- How JWT authentication and middleware protect private routes.
-- How bcryptjs can be used to hash passwords and MPINs.
-- How to manage wallet-related operations and transaction records.
-- How to test APIs using Postman and debug backend issues.
+- Structuring a backend application using Node.js and Express.js.
+- Creating and handling REST APIs.
+- Connecting MongoDB with Node.js using Mongoose.
+- Implementing JWT authentication and protected routes.
+- Hashing passwords and MPINs using bcryptjs.
+- Managing wallet operations and transaction records.
+- Testing API requests using Postman.
+- Debugging backend errors and handling server responses.
 
 ## Future Improvements
 
@@ -238,7 +234,7 @@ Working on this project helped me understand:
 - Integrate a payment gateway in a sandbox environment.
 - Implement stronger transaction validation and security.
 - Add automated API and integration testing.
-- Improve transaction handling with database transactions.
+- Improve transaction handling using database transactions.
 
 ## Disclaimer
 
