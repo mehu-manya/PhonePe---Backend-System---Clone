@@ -1,35 +1,43 @@
 # PhonePe Backend System Clone
 
-A backend application inspired by digital payment platforms, built using Node.js, Express.js, and MongoDB. The project covers common wallet and payment-related operations, including user registration, login, MPIN setup, adding money, bill payments, money transfers, and transaction history.
+A backend application inspired by digital payment platforms, developed using **Node.js, Express.js, and MongoDB**. This project implements essential digital wallet functionalities, including user registration, authentication, MPIN management, money transfers, bill payments, wallet top-ups, and transaction history.
 
-The project focuses on understanding backend development, REST API design, authentication, database management, and handling transaction-related operations.
+The project focuses on backend development concepts such as REST API design, JWT authentication, database management, password security, and transaction handling.
 
 ## Features
 
 ### 1. User Authentication
 - User registration with name, email, phone number, and password.
-- Login using registered email and password.
+- User login using registered credentials.
 - JWT-based authentication for protected routes.
 - Retrieve the authenticated user's profile.
 
 ### 2. MPIN Management
 - Set a four-digit MPIN.
-- Hash the MPIN using bcryptjs before storing it.
-- Verify MPIN for transaction-related operations.
+- Hash MPIN using bcryptjs before storing it in MongoDB.
+- Verify MPIN before processing transactions.
 
 ### 3. Wallet Management
 - Add money to the user's wallet.
-- Make bill payments using the wallet balance.
-- Maintain wallet balance.
+- Make bill payments using the available wallet balance.
+- Maintain and update wallet balances.
+- Store wallet-related transactions.
 
 ### 4. Money Transfers
 - Transfer money to another registered user using their phone number.
-- Verify MPIN before processing a transfer.
+- Verify MPIN before processing transfers.
+- Maintain sender and receiver transaction records.
 - Store transaction details in MongoDB.
 
 ### 5. Transaction History
-- Retrieve transaction records associated with the logged-in user.
+- Retrieve transaction records associated with the authenticated user.
+- Track transaction types, amounts, status, and timestamps.
 - Display sender and receiver details using Mongoose population.
+
+### 6. Database Seeding
+- Includes a `seed.js` file to populate MongoDB with demo users and sample transactions.
+- Creates three demo users and sample transaction records.
+- Supports rerunning the seed script without duplicating existing demo records.
 
 ## Tech Stack
 
@@ -37,9 +45,9 @@ The project focuses on understanding backend development, REST API design, authe
 |---|---|
 | Node.js | JavaScript runtime |
 | Express.js | Backend framework and REST API development |
-| MongoDB | Database |
+| MongoDB | NoSQL database |
 | Mongoose | MongoDB object modeling |
-| JWT | User authentication |
+| JWT | Authentication and authorization |
 | bcryptjs | Password and MPIN hashing |
 | Postman | API testing |
 | Swagger UI | API documentation |
@@ -73,9 +81,23 @@ PhonePe-Backend-System/
 ├── postman/
 │   └── Phonepe - MERN - BackEnd.postman_collection.json
 │
+├── screenshots/
+│   ├── server-running.png
+│   ├── user-registration.png
+│   ├── user-login.png
+│   ├── mpin-setup.png
+│   ├── mongodb-users.png
+│   ├── mongodb-transactions1.png
+│   ├── mongodb-transactions2.png
+│   ├── money-transfer.png
+│   ├── wallet-payment.png
+│   └── add-money-wallet.png
+│
+├── .env.example
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
+├── seed.js
 ├── server.js
 ├── swagger-output.json
 └── README.md
@@ -90,7 +112,7 @@ Follow these steps to run the project locally.
 Make sure you have installed:
 
 - Node.js
-- MongoDB
+- MongoDB (local installation or MongoDB Atlas)
 - MongoDB Compass (optional)
 - Postman
 - Git
@@ -115,7 +137,7 @@ npm install
 
 ### 4. Configure Environment Variables
 
-Create a `.env` file in the root directory and add:
+Create a `.env` file in the root directory using `.env.example` as a reference.
 
 ```env
 PORT=3000
@@ -123,19 +145,49 @@ MONGO_URI=mongodb://localhost:27017/phonepe-BE-system-DEV
 JWT_SECRET=your_secret_key
 ```
 
-Replace the JWT secret with your own secure value. If you are using MongoDB Atlas, provide your Atlas connection string instead.
+Replace the placeholder JWT secret with a secure value.
 
-### 5. Start the Server
+For MongoDB Atlas, use your own MongoDB connection string as the `MONGO_URI`.
+
+**Note:** The actual `.env` file contains private configuration values and should never be committed to GitHub.
+
+### 5. Start the Backend Server
 
 ```bash
 npm run dev
 ```
 
-Once the server starts, the backend will be available at:
+Once the server starts successfully:
 
-**Base URL:** `http://localhost:3000`
+- **Base URL:** http://localhost:3000
+- **Swagger API Documentation:** http://localhost:3000/api-docs
 
-**Swagger Documentation:** `http://localhost:3000/api-docs`
+## Database Seeding
+
+The project includes a `seed.js` script to populate the database with sample users and transactions for testing purposes.
+
+### Run the Seed Script
+
+First, configure `MONGO_URI` in your `.env` file.
+
+Then execute:
+
+```bash
+npm run seed
+```
+
+The script creates three demo users and sample transactions in MongoDB.
+
+The seed operation can be rerun without duplicating existing demo records.
+
+**Demo Credentials:**
+
+| Field | Value |
+|---|---|
+| Password | `Demo1234!` |
+| MPIN | `1234` |
+
+The demo password and MPIN are intended only for local development and testing.
 
 ## API Endpoints
 
@@ -144,24 +196,24 @@ Once the server starts, the backend will be available at:
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/` | Check server status |
-| POST | `/api/auth/register` | Register a new user |
-| POST | `/api/auth/login` | Login user |
-| GET | `/api/auth/profile` | Get user profile |
-| POST | `/api/auth/set-mpin` | Set user MPIN |
+| POST | `/api/auth/register/` | Register a new user |
+| POST | `/api/auth/login/` | Login user |
+| GET | `/api/auth/profile/` | Retrieve user profile |
+| POST | `/api/auth/set-mpin/` | Set user MPIN |
 
 ### Transaction Routes
 
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/transactions/send` | Send money to another user |
-| GET | `/api/transactions/history` | Retrieve transaction history |
+| POST | `/api/transactions/send/` | Send money to another user |
+| GET | `/api/transactions/history/` | Retrieve transaction history |
 
 ### Wallet Routes
 
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/wallet/add-money` | Add money to wallet |
-| POST | `/api/wallet/pay-bill` | Pay a bill using wallet balance |
+| POST | `/api/wallet/add-money/` | Add money to wallet |
+| POST | `/api/wallet/pay-bill/` | Pay bills using wallet balance |
 
 ### Authentication
 
@@ -173,11 +225,11 @@ Authorization: Bearer <your_token>
 
 ## API Testing Using Postman
 
-A Postman collection is included in the `postman/` directory for testing the backend APIs.
+A Postman collection is included in the `postman/` directory to test the backend APIs.
 
 The collection contains three groups of requests:
 
-- Auth Routes
+- Authentication Routes
 - Transaction Routes
 - Wallet Routes
 
@@ -185,22 +237,68 @@ The collection contains three groups of requests:
 
 1. Open Postman.
 2. Import the JSON collection from the `postman/` directory.
-3. Set the `base_Url` variable to `http://localhost:3000`.
+3. Configure the `base_Url` variable as `http://localhost:3000`.
 4. Start the backend server.
-5. Register a new user using the registration API.
-6. Log in and copy the JWT token from the response.
-7. Set the token variable in Postman.
-8. Use the authenticated requests to test wallet and transaction operations.
+5. Register a new user or use a seeded demo account.
+6. Log in and retrieve the JWT token.
+7. Configure the token variable in Postman.
+8. Test the protected wallet and transaction APIs.
 
-The collection can also be imported directly from the JSON file available in this repository.
+## Application Screenshots
 
-## Database
+The following screenshots demonstrate the backend server, API operations, and MongoDB database records.
 
-MongoDB is used to store user details and transaction records. Mongoose schemas are used to define the structure of the documents.
+### 1. Backend Server
+
+![Backend Server Running](screenshots/server-running.png)
+
+### 2. User Authentication
+
+**User Registration**
+
+![User Registration](screenshots/user-registration.png)
+
+**User Login**
+
+![User Login](screenshots/user-login.png)
+
+**MPIN Setup**
+
+![MPIN Setup](screenshots/mpin-setup.png)
+
+### 3. MongoDB Database
+
+**User Collection**
+
+![MongoDB Users](screenshots/mongodb-users.png)
+
+**Transaction Collection**
+
+![MongoDB Transactions](screenshots/mongodb-transactions1.png)
+
+![MongoDB Transactions](screenshots/mongodb-transactions2.png)
+
+### 4. Wallet and Transaction Operations
+
+**Money Transfer**
+
+![Money Transfer](screenshots/money-transfer.png)
+
+**Wallet Payment**
+
+![Wallet Payment](screenshots/wallet-payment.png)
+
+**Add Money to Wallet**
+
+![Add Money](screenshots/add-money-wallet.png)
+
+## Database Design
+
+MongoDB is used to store user details and transaction records. Mongoose schemas define the structure of the database documents.
 
 ### User Model
 
-Stores information such as:
+Stores the following information:
 
 - Name
 - Email
@@ -213,19 +311,28 @@ Stores information such as:
 
 ### Transaction Model
 
-Stores transaction-related information, including sender, receiver, amount, transaction type, status, and timestamp, according to the transaction schema.
+Stores transaction-related information, including:
+
+- Sender
+- Receiver
+- Transaction amount
+- Transaction type
+- Transaction status
+- Timestamp
 
 ## What I Learned
 
-While developing this project, I gained practical experience with:
+Through this project, I gained practical experience in:
 
-- Structuring a backend application using Node.js and Express.js.
-- Creating and handling REST APIs.
-- Connecting MongoDB with Node.js using Mongoose.
-- Implementing JWT authentication and protected routes.
+- Structuring backend applications using Node.js and Express.js.
+- Designing and developing RESTful APIs.
+- Integrating MongoDB with Node.js using Mongoose.
+- Implementing JWT-based authentication and protected routes.
 - Hashing passwords and MPINs using bcryptjs.
 - Managing wallet operations and transaction records.
-- Testing API requests using Postman.
+- Creating database seed scripts for sample data generation.
+- Testing APIs using Postman.
+- Documenting APIs using Swagger UI.
 - Debugging backend errors and handling server responses.
 
 ## Future Improvements
@@ -244,4 +351,4 @@ This project is developed for educational and learning purposes. It is an indepe
 
 **Mehu Manya**
 
-GitHub: [mehu-manya](https://github.com/mehu-manya)
+GitHub: [@mehu-manya](https://github.com/mehu-manya)
